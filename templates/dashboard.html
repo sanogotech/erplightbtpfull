@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2><i class="bi bi-speedometer2"></i> Tableau de Bord</h2>
+    <div class="user-info">
+        Connecté en tant que <strong>{{ user }}</strong> ({{ role }})
+        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger ms-3">
+            <i class="bi bi-box-arrow-right"></i> Déconnexion
+        </a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Menu latéral -->
+    <div class="col-md-3">
+        <div class="card sidebar-menu">
+            <div class="card-header">
+                <i class="bi bi-menu-button"></i> Menu
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-file-earmark-text"></i> Devis
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-calendar-check"></i> Planning
+                </a>
+                {% if role == 'admin' %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-gear"></i> Administration
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Aperçu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Statistiques</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Bienvenue dans votre ERP</h5>
+                <div class="kpi-cards row mt-4">
+                    <div class="col-md-4">
+                        <div class="kpi-card">
+                            <div class="kpi-value">12</div>
+                            <div class="kpi-label">Devis en cours</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-card">
+                            <div class="kpi-value">5</div>
+                            <div class="kpi-label">Chantiers actifs</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-card">
+                            <div class="kpi-value">24K€</div>
+                            <div class="kpi-label">CA ce mois</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

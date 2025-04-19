@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold">ERP BTP Light</h1>
+        <p class="lead">Solution simplifiée de gestion pour les professionnels du BTP</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mt-3">
+            <i class="bi bi-box-arrow-in-right"></i> Se connecter
+        </a>
+    </div>
+</div>
+
+<div class="container features py-5">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <i class="bi bi-file-earmark-text feature-icon"></i>
+            <h3>Gestion des Devis</h3>
+            <p>Créez et suivez vos devis facilement</p>
+        </div>
+        <div class="col-md-4">
+            <i class="bi bi-calendar-check feature-icon"></i>
+            <h3>Planning Chantiers</h3>
+            <p>Organisez vos interventions</p>
+        </div>
+        <div class="col-md-4">
+            <i class="bi bi-currency-euro feature-icon"></i>
+            <h3>Facturation</h3>
+            <p>Générez vos factures en 1 clic</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
