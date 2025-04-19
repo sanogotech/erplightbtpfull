@@ -1,79 +1,178 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h2><i class="bi bi-speedometer2"></i> Tableau de Bord</h2>
-    <div class="user-info">
-        Connecté en tant que <strong>{{ user }}</strong> ({{ role }})
-        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger ms-3">
-            <i class="bi bi-box-arrow-right"></i> Déconnexion
-        </a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            {% include 'includes/sidebar.html' %}
+        </div>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Tableau de Bord</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Exporter</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickActionModal">
+                        <i class="bi bi-lightning"></i> Action rapide
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Devis en cours</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.devis.total }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-file-earmark-text fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Ajoutez 3 autres cartes KPI de la même manière -->
+            </div>
+
+            <!-- Derniers devis -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Derniers devis</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Référence</th>
+                                    <th>Client</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for devis in derniers_devis %}
+                                <tr>
+                                    <td>{{ devis.reference }}</td>
+                                    <td>{{ devis.client.nom }}</td>
+                                    <td>{{ devis.montant }} €</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if devis.statut == 'accepté' else 'warning' if devis.statut == 'envoyé' else 'secondary' }}">
+                                            {{ devis.statut }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">Voir</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendrier des chantiers -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Prochains chantiers</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for chantier in chantiers %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ chantier.nom }}</h5>
+                                <small>{{ chantier.date_debut.strftime('%d/%m/%Y') }}</small>
+                            </div>
+                            <p class="mb-1">Client: {{ chantier.client.nom }}</p>
+                            <small>Statut: 
+                                <span class="badge bg-{{ 'success' if chantier.statut == 'terminé' else 'primary' if chantier.statut == 'en_cours' else 'warning' }}">
+                                    {{ chantier.statut }}
+                                </span>
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </div>
 
-<div class="row mt-4">
-    <!-- Menu latéral -->
-    <div class="col-md-3">
-        <div class="card sidebar-menu">
-            <div class="card-header">
-                <i class="bi bi-menu-button"></i> Menu
+<!-- Modal Actions Rapides -->
+<div class="modal fade" id="quickActionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actions Rapides</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="list-group list-group-flush">
-                <a href="#" class="list-group-item list-group-item-action active">
-                    <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-file-earmark-text"></i> Devis
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-calendar-check"></i> Planning
-                </a>
-                {% if role == 'admin' %}
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-gear"></i> Administration
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenu principal -->
-    <div class="col-md-9">
-        <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Aperçu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Statistiques</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">Bienvenue dans votre ERP</h5>
-                <div class="kpi-cards row mt-4">
-                    <div class="col-md-4">
-                        <div class="kpi-card">
-                            <div class="kpi-value">12</div>
-                            <div class="kpi-label">Devis en cours</div>
-                        </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('nouveau_devis') }}" class="btn btn-primary w-100">
+                            <i class="bi bi-file-earmark-plus"></i> Nouveau Devis
+                        </a>
                     </div>
-                    <div class="col-md-4">
-                        <div class="kpi-card">
-                            <div class="kpi-value">5</div>
-                            <div class="kpi-label">Chantiers actifs</div>
-                        </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-success w-100">
+                            <i class="bi bi-calendar-plus"></i> Nouveau Chantier
+                        </button>
                     </div>
-                    <div class="col-md-4">
-                        <div class="kpi-card">
-                            <div class="kpi-value">24K€</div>
-                            <div class="kpi-label">CA ce mois</div>
-                        </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-info w-100">
+                            <i class="bi bi-cash-stack"></i> Encaissement
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-warning w-100" id="exportJDEBtn">
+                            <i class="bi bi-database"></i> Export JDE
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Gestion de l'export JDE
+document.getElementById('exportJDEBtn').addEventListener('click', async () => {
+    const response = await fetch('/export/jde');
+    const data = await response.json();
+    
+    if(data.status === 'success') {
+        // Créer un blob et déclencher le téléchargement
+        const blob = new Blob([data.data], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `export_jde_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Afficher notification
+        showToast('Export JDE réussi', 'L\'export a été généré avec succès', 'success');
+    }
+});
+
+function showToast(title, message, type) {
+    // Implémentez votre système de toast ici
+    alert(`${title}: ${message}`);
+}
+</script>
 {% endblock %}

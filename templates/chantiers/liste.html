@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Planning des Chantiers{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Planning des Chantiers</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nouveau chantier
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    {% for chantier in chantiers %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-{{ 'success' if chantier.statut == 'terminé' else 'primary' if chantier.statut == 'en_cours' else 'warning' }}">
+                {{ chantier.nom }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ chantier.client.nom }}</h5>
+                <p class="card-text">
+                    <i class="bi bi-calendar-date"></i> {{ chantier.date_debut.strftime('%d/%m/%Y') }} 
+                    au {{ chantier.date_fin.strftime('%d/%m/%Y') }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <span class="badge bg-{{ 'success' if chantier.statut == 'terminé' else 'primary' if chantier.statut == 'en_cours' else 'warning' }}">
+                    {{ chantier.statut }}
+                </span>
+                <a href="#" class="btn btn-sm btn-outline-primary float-end">
+                    <i class="bi bi-three-dots"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
